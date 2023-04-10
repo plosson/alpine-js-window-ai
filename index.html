@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AlpineJS + Window.AI example</title>
+    <script src="//cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+    <script type="module">
+        import Alpine from "https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.4/module.esm.js";
+
+        window.Alpine = Alpine;
+        Alpine.data("data", () => {
+            return {
+                messages: [{role: 'assistant', content: 'I am a super smart AI assistant'}],
+                status: 'Checking for Window.AI',
+                content: '',
+                startTime: new Date().getTime(),
+                sendMessage() {
+                    this.messages.push({role: 'user', content: this.content});
+                    this.content = '';
+                    // alpine is using proxies so remove the proxy wrapper
+                    let arr = Alpine.raw(this.messages);
+                    window.ai.getCompletion({messages: arr}).then((o) => {
+                        this.messages.push(o.message);
+                    })
+                },
+                checkWindowAi() {
+                    if (!("ai" in window)) {
+                        if (new Date().getTime() - this.startTime > 3000) {
+                            this.status = 'Window.AI not found. Please install it';
+                        } else {
+                            setTimeout(() => {
+                                this.checkWindowAi()
+                            }, 500);
+                        }
+                    } else {
+                        this.status = 'Window.AI initialized';
+                    }
+                },
+                init() {
+                    this.checkWindowAi();
+                }
+            }
+        });
+        Alpine.start();
+    </script>
+    <style>
+        .debug {
+            border: 1px solid red;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center w-screen min-h-screen bg-gray-100 text-gray-800 p-10" x-data="data">
+
+<!-- Component Start -->
+<div class="flex flex-col flex-grow w-full max-w-xl bg-white shadow-xl rounded-lg overflow-hidden">
+    <div class="flex flex-col flex-grow h-0 p-4 overflow-auto" id="messages">
+        <div class="flex w-full mb-2 p-2 mx-auto justify-center border-b border-gray-300">
+            <span class="font-bold" x-text="status"></span>
+        </div>
+        <template x-for="message in messages">
+            <div class="flex w-full mt-2 space-x-3 max-w-xs" :class="message.role === 'user' ? 'ml-auto justify-end': ''">
+                <div>
+                    <div class="text-white p-3 rounded-l-lg rounded-br-lg" :class="message.role == 'user' ? 'bg-blue-600' : 'bg-gray-300'">
+                        <p class="text-sm" x-text="message.content">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</p>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+    <div class="bg-gray-300 p-4">
+        <input @keyup.enter="sendMessage" x-model="content" class="flex items-center h-10 w-full rounded px-3 text-sm" type="text" placeholder="Type your message…">
+    </div>
+</div>
+</body>
+</html>
