@@ -1,9 +1,9 @@
-# Next JS x window.ai
+# AlpineJS x window.ai
 
 This is a simple single page HTML that demonstrates how to integrate [window.ai](windowai.io) to build a chatbot 
 interface. The app provides a user-friendly chat interface for users to communicate with an AI assistant.
 
-It uses AlpineJS and Tailwind CSS 
+It uses [AlpineJS](https://alpinejs.dev/) and [Tailwind CSS](https://tailwindcss.com/) 
 
 ## Features
 
