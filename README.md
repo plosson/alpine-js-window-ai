@@ -7,7 +7,7 @@ It uses [AlpineJS](https://alpinejs.dev/) and [Tailwind CSS](https://tailwindcss
 
 ## Features
 
-- User-friendly chat interface
+- minimal chat interface
 - AI assistant powered by [window.ai](windowai.io)
 
 ## Requirements 
